@@ -25,6 +25,9 @@ app.ticker.add((delta) => {
 	if(num1 && !num1_fired){
 		clusterController.symbolsGrid.getClusters();
 	}
+	
+	if(num1)
+		num1 = false;
 });
 
 let num1 	   = false;
