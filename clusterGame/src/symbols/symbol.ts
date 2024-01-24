@@ -34,7 +34,7 @@ export class Symbol {
     
     private _graphic:               Graphics;
 
-    public _symbolContainer!:   Container;
+    public _symbolContainer!:       Container;
 
     private _moving = false;
 
@@ -81,7 +81,8 @@ export class Symbol {
     public moveSymbol(): void{
         this._moving = true;
         gsap.to(this._graphic,{ 
-            duration: 1.3,
+            duration: 2.3,
+            // duration: 5.0,
             ease: "bounce.out",
             y: this._y,
             onComplete: (): void => {

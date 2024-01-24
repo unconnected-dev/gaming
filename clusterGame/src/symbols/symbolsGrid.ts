@@ -11,7 +11,7 @@ export class SymbolsGrid {
 
     private _clusterController!:     ClusterController;
 
-    private SYMBOL_GRID_DEBUG:      boolean = true;
+    private SYMBOL_GRID_DEBUG:      boolean = false;
 
     private _gridSizeX!:            number;
 
@@ -55,6 +55,7 @@ export class SymbolsGrid {
                 this._symbolGridContainer.addChild(aGameSymbol.symbolContainer);
                 row.push(aGameSymbol);
             }
+            console.log(row)
             this._symbolsArray.push(row);
         }
 
@@ -62,6 +63,24 @@ export class SymbolsGrid {
             console.log(`initSymbolsArray...`)
             console.log(this._symbolsArray);
         }
+    }
+
+    private addNewSymbols(): void{
+        let newSymbolsCounter = 0;
+        for (let row = 0; row < this._gridSizeY; row++) {
+            for (let col = 0; col < this._gridSizeX; col++) {
+                if(this._symbolsArray[row][col] === this.EMPTY_SYMBOL){
+                    // console.log(`${row}:${col}`);
+                    newSymbolsCounter++;
+                    const randomValue  = Math.floor(Math.random() * 5) + 1;
+
+                    const aGameSymbol = this.createGameSymbol(randomValue, col, row);
+                    this._symbolGridContainer.addChild(aGameSymbol.symbolContainer);
+                    this._symbolsArray[row][col] = aGameSymbol
+                }
+            }
+        }
+        console.log(`newSymbolsCounter: ${newSymbolsCounter}`);
     }
 
     private createGameSymbol(_symbolValue: number, _gridX: number, _gridY: number): Symbol{
@@ -115,7 +134,7 @@ export class SymbolsGrid {
         }
         
         if(clusters.length > 0){
-            console.log(`Clusters Detected: `);
+            // console.log(`Clusters Detected: `);
             //row, col
             clusters.forEach((cluster, index) => {
                 let buildString = ``;
@@ -123,12 +142,14 @@ export class SymbolsGrid {
                     buildString += ` ${number[1]}:${number[0]},`;
                 });
                 buildString = buildString.slice(0, -1)
-                console.log(`${buildString}`);
+                // console.log(`${buildString}`);
             });
         }
 
         this.removeClusters(clusters);
         this.dropDownRemainingSymbols();
+        this.addNewSymbols();
+
     }
 
     private detectCluster(row: number, col: number, visited: boolean[][]): [number, number][]{
