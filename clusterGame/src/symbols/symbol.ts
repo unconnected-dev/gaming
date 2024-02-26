@@ -1,12 +1,16 @@
 import { Container, Graphics } from "pixi.js";
 import { gameColors, symbolValues } from "../miscStyle";
-import { gsap }from "gsap";import { ClusterController } from "../clusterController";
-;
+import { gsap } from "gsap";
+import { TweenMax, TimelineLite } from "gsap";
+import { ClusterController } from "../clusterController";
+
 
 /**
  * @description A single symbol in the game
  */
 export class Symbol {
+
+    public static readonly timeToHideSymbol: number = 1;
 
     private _clusterController: ClusterController;
 
@@ -91,6 +95,14 @@ export class Symbol {
         });
     }
 
+    public animateRemoveSymbol(): void{
+        // TweenMax.fromTo([this._graphic.scale, this._graphic.scale], Symbol.timeToHideSymbol, {x: 0.5, y:0.5}, {x: 1, y: 1, yoyo: true, ease: "Elastic.easeOut"});
+        let animation = new TimelineLite();
+
+        animation.fromTo(this._graphic.scale, 0.5, {x: 1, y: 1 }, {x: 1.5, y: 1.5, ease: "Elastic.easeOut"})
+        .fromTo(this._graphic.scale, 0.2, {x: 1.5, y: 1.5 }, {x: 0, y: 0});
+ 
+    }
 
     public set yPosition(_y: number){
         this._y = _y;
