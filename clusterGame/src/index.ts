@@ -19,8 +19,8 @@ resizeHandler();
 
 
 app.ticker.add((delta) => {
-	if(clusterController.symbolsGrid.checkGameTurn)
-	clusterController.symbolsGrid.initiateGameTurn();
+	// if(clusterController.symbolsGrid.checkGameTurn)
+	// clusterController.symbolsGrid.initiateGameTurn();
 
 	if(num1 && !num1_fired){
 		clusterController.symbolsGrid.getClusters();
@@ -57,6 +57,13 @@ function resizeHandler(){
 
 	clusterController.symbolsGrid.symbolGridContainer.x = Math.floor(centerX - clusterController.symbolsGrid.symbolGridContainer.width / 2);
 	clusterController.symbolsGrid.symbolGridContainer.y = Math.floor(centerY - clusterController.symbolsGrid.symbolGridContainer.height / 2);
+
+	clusterController.startGameButton.buttonContainer.x = centerX - clusterController.startGameButton.buttonContainer.width/2;
+	clusterController.startGameButton.buttonContainer.y = centerY - clusterController.startGameButton.buttonContainer.height/2;
+
+	clusterController.resetGameButton.buttonContainer.x = centerX - clusterController.resetGameButton.buttonContainer.width/2;
+	clusterController.resetGameButton.buttonContainer.y = centerY - clusterController.resetGameButton.buttonContainer.height/2;
+
 }
 
 window.addEventListener('resize', resizeHandler);

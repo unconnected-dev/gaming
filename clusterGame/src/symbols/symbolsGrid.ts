@@ -9,6 +9,8 @@ import { ClusterController } from "../clusterController";
  */
 export class SymbolsGrid {
 
+    public static readonly waitToClear: number = 0.5;
+
     private _clusterController!:     ClusterController;
 
     private SYMBOL_GRID_DEBUG:      boolean = false;
@@ -65,7 +67,7 @@ export class SymbolsGrid {
         }
     }
 
-    private addNewSymbols(): void{
+    public addNewSymbols(): void{
         let newSymbolsCounter = 0;
         for (let row = 0; row < this._gridSizeY; row++) {
             for (let col = 0; col < this._gridSizeX; col++) {
@@ -181,6 +183,7 @@ export class SymbolsGrid {
         clusters.forEach((cluster => {
             cluster.forEach(([row, col]) => {
                 const aSymbol = this._symbolsArray[row][col];
+                
                 if(aSymbol)
                     this._symbolGridContainer.removeChild(aSymbol.symbolContainer);
                 
@@ -188,6 +191,42 @@ export class SymbolsGrid {
             });
         }));
     }
+
+    //Remove all symbols from the entire grid
+    public async clearGrid(): Promise<void>{
+
+        await this.animateClearGrid();
+
+        for(let i = 0; i < this._symbolsArray.length; i++){
+            const row = this._symbolsArray[i];
+            for(let j = 0; j < row.length; j++){
+                const aSymbol = this._symbolsArray[i][j];
+                aSymbol.animateRemoveSymbol();
+
+                if(aSymbol)
+                    this._symbolGridContainer.removeChild(aSymbol.symbolContainer);
+
+                this._symbolsArray[i][j] = this.EMPTY_SYMBOL;
+            }
+        }
+    }
+
+    //Wait on the animation
+    async animateClearGrid(): Promise<void>{
+        
+        for(let i = 0; i < this._symbolsArray.length; i++){
+            const row = this._symbolsArray[i];
+            for(let j = 0; j < row.length; j++){
+                const aSymbol = this._symbolsArray[i][j];
+                aSymbol.animateRemoveSymbol();
+            }
+        }
+
+        await new Promise<void>((resolve, reject) => {
+            setTimeout(resolve, (Symbol.timeToHideSymbol + SymbolsGrid.waitToClear) * 1000);
+        });
+    }
+
 
     private dropDownRemainingSymbols(): void{
         const nonEmptySymbols: Symbol[] = [];
@@ -224,9 +263,6 @@ export class SymbolsGrid {
         }
     }
 
-    public initiateGameTurn(): void{
-        
-    }
 
     public get symbolGridContainer(): Container{
         return this._symbolGridContainer;
