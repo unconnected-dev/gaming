@@ -124,32 +124,79 @@ export class Announcement{
 
     public rollupNumber(target: number, duration: number) {
         let obj = { value: parseInt(this._numberTextExample.text) || 0 }; // Start from current value
-        
+        let baseScale = 1; // Initial scale
+        let milestoneThreshold = 1000; // First milestone
+        let lastMilestone = 0; // Track last crossed milestone
+        let milestoneCooldown = false; // Cooldown flag
+    
         TweenMax.to(obj, {
             duration: duration,
             value: target,
-            ease: 'power1.out',
+            ease: 'power2.out',
             
             onUpdate: () => {
                 const newText = Math.floor(obj.value).toString();
-    
-                this._numberTextDefault.text = newText;
-
-                // Update the text with the current value
                 this._numberTextExample.text = newText;
-                
-                // Adjust kerning based on the current value
+                this._numberTextDefault.text = newText;
+    
+                // Check if we've crossed the next milestone and cooldown is inactive
+                if (!milestoneCooldown && Math.floor(obj.value) >= milestoneThreshold && lastMilestone < milestoneThreshold) {
+                    this.scaleUp(baseScale); // Trigger the pop effect
+                    lastMilestone = milestoneThreshold; // Update last milestone
+                    milestoneCooldown = true; // Activate cooldown
+    
+                    // Increase milestone dynamically (1000 → 10000 → 100000...)
+                    milestoneThreshold *= 10;
+                    baseScale += 0.1; // Gradually increase baseline scale
+    
+                    // Set cooldown duration (e.g., 0.5 seconds)
+                    setTimeout(() => {
+                        milestoneCooldown = false; // Reset cooldown
+                    }, 1500);
+                }
+    
                 this.adjustKerning(newText, obj.value, target);
             },
             
             onComplete: () => {
-                this._numberTextDefault.text = target.toString();
                 this._numberTextExample.text = target.toString();
+                this._numberTextDefault.text = target.toString();
                 this.adjustKerning(this._numberTextExample.text, target, target);
             }
         });
     }
     
+    
+    
+    // Scaling function with bounce effect
+    private scaleUp(baseScale: number) {
+        const popScale = baseScale + 0.4;  // Temporary scale up
+
+        TweenMax.to(this._numberTextExample.scale, {
+            duration: 0.6,
+            x: popScale,
+            y: popScale,
+            ease: "power2.out",
+            onComplete: () => {
+                // Shrink down slightly below baseline, then bounce back
+                TweenMax.to(this._numberTextExample.scale, {
+                    duration: 0.4,
+                    x: baseScale - 0.2, 
+                    y: baseScale - 0.2,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        TweenMax.to(this._numberTextExample.scale, {
+                            duration: 0.2,
+                            x: baseScale,
+                            y: baseScale,
+                            ease: "bounce.out"
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     private adjustKerning(text: string, currentValue: number, targetValue: number) {
         // Progress from 1 to 0
         let progress = Math.abs(currentValue - targetValue) / targetValue; 
@@ -159,9 +206,9 @@ export class Announcement{
         this._numberTextExample.style.letterSpacing = spacing;
 
         // Make the number bigger at the end
-        let scaleProgress = Math.pow(progress, 0.25);
-        let scale = 2 - 0.6 * scaleProgress;
-        this._numberTextExample.scale.set(scale);
+        // let scaleProgress = Math.pow(progress, 0.25);
+        // let scale = 2 - 0.6 * scaleProgress;
+        // this._numberTextExample.scale.set(scale);
     }
     
     
