@@ -1,5 +1,5 @@
-import { Container, Graphics, Text } from "pixi.js";
-import { BasicButtonStyle, gameColors } from "../miscStyle";
+import { Container, DisplayObject, Graphics, Text } from "pixi.js";
+import { BasicButtonStyling, gameColors } from "../miscStyle";
 import { TweenMax } from "gsap";
 import { RollupController } from "../rollupController";
 
@@ -37,13 +37,13 @@ export class BasicButton{
 
         this._rollupController   = _rollupController;
 
-        this._width             = BasicButtonStyle.width;
-        this._height            = BasicButtonStyle.height;
+        this._width             = BasicButtonStyling.width;
+        this._height            = BasicButtonStyling.height;
 
-        this._lineWidth         = BasicButtonStyle.lineWidth;
-        this._cornerRadius      = BasicButtonStyle.cornerRadius;
-        this._borderColor       = BasicButtonStyle.borderColor;
-        this._backgroundColor   = BasicButtonStyle.backgroundColor;
+        this._lineWidth         = BasicButtonStyling.lineWidth;
+        this._cornerRadius      = BasicButtonStyling.cornerRadius;
+        this._borderColor       = BasicButtonStyling.borderColor;
+        this._backgroundColor   = BasicButtonStyling.backgroundColor;
 
         this._graphic = new Graphics();
         this._graphic.lineStyle(this._lineWidth, this._borderColor, 1);
@@ -57,19 +57,13 @@ export class BasicButton{
         this._graphic.cursor      = 'pointer';
 
 
-        this._buttonText = new Text(String(_buttonText), 
-            {
-                fontFamily: BasicButtonStyle.fontFamily, 
-                fontSize:   BasicButtonStyle.fontSize, 
-                fill:       BasicButtonStyle.fontColor, 
-                align:      'center'
-            });
+        this._buttonText = new Text(String(_buttonText), BasicButtonStyling.basicTextStyle.clone());
 
         this._buttonText.pivot.x = this._buttonText.width/2;
         this._buttonText.pivot.y = this._buttonText.height/2;
 
         this._buttonContainer = new Container();
-        this._buttonContainer.addChild(this._graphic, this._buttonText);
+        this._buttonContainer.addChild(this._graphic as unknown as DisplayObject, this._buttonText as unknown as DisplayObject);
 
         
         this._graphic.on('pointerdown', () => {this.onClick();});

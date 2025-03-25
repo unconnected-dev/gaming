@@ -1,5 +1,5 @@
-import { Container, Graphics, Text } from "pixi.js";
-import { AnnouncementStyle, gameColors } from "./miscStyle";
+import { Container, DisplayObject, Graphics, Text } from "pixi.js";
+import { AnnouncementStyling, gameColors } from "./miscStyle";
 import { TweenMax } from "gsap";
 import { RollupController } from "./rollupController";
 
@@ -37,46 +37,26 @@ export class Announcement{
         
         this._rollupController   = _rollupController;
 
-        this._lineWidth         = AnnouncementStyle.lineWidth;
-        this._cornerRadius      = AnnouncementStyle.cornerRadius;
-        this._borderColor       = AnnouncementStyle.borderColor;
-        this._backgroundColor   = AnnouncementStyle.backgroundColor;
+        this._lineWidth         = AnnouncementStyling.lineWidth;
+        this._cornerRadius      = AnnouncementStyling.cornerRadius;
+        this._borderColor       = AnnouncementStyling.borderColor;
+        this._backgroundColor   = AnnouncementStyling.backgroundColor;
 
         this._graphic = new Graphics();
 
-        this._announcementText = new Text(String(``), 
-            {
-                fontFamily:  AnnouncementStyle.fontFamily,
-                fontVariant: `small-caps`, 
-                fontSize:    AnnouncementStyle.fontSize, 
-                fill:        AnnouncementStyle.fontColor, 
-                align:       `center`
-            });
+        this._announcementText = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
         
-        this._numberTextDefault = new Text(String(`0`),
-            {
-                fontFamily:  AnnouncementStyle.fontFamily,
-                fontWeight: 'bold', 
-                fontVariant: `small-caps`, 
-                fontSize:    AnnouncementStyle.fontSize, 
-                fill:        AnnouncementStyle.fontColor, 
-                align:       `center`
-            });
+        this._numberTextDefault = new Text(String(`0`), AnnouncementStyling.basicTextStyle.clone());
         this._numberTextDefault.scale.set(2, 2);
 
-        this._numberTextExample = new Text(String(`0`),
-            {
-                fontFamily:  AnnouncementStyle.fontFamily,
-                fontWeight: 'bold', 
-                fontVariant: `small-caps`, 
-                fontSize:    AnnouncementStyle.fontSize, 
-                fill:        AnnouncementStyle.fontColor, 
-                align:       `center`
-            });
+        this._numberTextExample = new Text(String(`0`), AnnouncementStyling.basicTextStyle.clone());
         this._numberTextExample.scale.set(2, 2);
         
         this._announcementContainer = new Container();
-        this._announcementContainer.addChild(this._graphic, this._announcementText, this._numberTextDefault, this._numberTextExample);
+        this._announcementContainer.addChild(this._graphic as unknown as DisplayObject,
+                                            this._announcementText as unknown as DisplayObject, 
+                                            this._numberTextDefault as unknown as DisplayObject, 
+                                            this._numberTextExample as unknown as DisplayObject);
     }
 
     public setPositions(_x: number, _y: number): void{

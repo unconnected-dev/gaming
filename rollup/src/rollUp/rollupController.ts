@@ -1,4 +1,4 @@
-import { Application } from "pixi.js";
+import { Application, DisplayObject } from "pixi.js";
 import { ResetRollupButton } from "./buttons/resetRollupButton";
 import { StartRollupButton } from "./buttons/startRollupButton";
 import { Announcement } from "./announcement";
@@ -33,9 +33,9 @@ export class RollupController {
 
         this.resize();
 
-        this._app.stage.addChild(this._startRollupButton.buttonContainer);
-        this._app.stage.addChild(this._resetRollupButton.buttonContainer);
-        this._app.stage.addChild(this._announcement.announcementContainer);
+        this._app.stage.addChild(this._startRollupButton.buttonContainer as unknown as DisplayObject);
+        this._app.stage.addChild(this._resetRollupButton.buttonContainer as unknown as DisplayObject);
+        this._app.stage.addChild(this._announcement.announcementContainer as unknown as DisplayObject);
 
         this._gameState = RollupState.WAITING;
     }
