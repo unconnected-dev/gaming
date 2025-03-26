@@ -35,15 +35,44 @@ export const BasicButtonStyling = {
 };
 
 export const AnnouncementStyling = {
+    width:                  800,
+    height:                 600,
     cornerRadius:           0,
     lineWidth:              0,
     borderColor:            gameColors.black,
     backgroundColor:        gameColors.honeyDew,
     basicTextStyle: new TextStyle({
         fontFamily:         `Open Sans`,
-        fontSize:           70,
+        fontSize:           60,
         fill:               gameColors.black,
         align:              `center`,
         fontVariant: `small-caps`
     })
+};
+
+export const ObjectPositions = {
+    announcementGraphic: {
+        x: 0,
+        y: 400
+    },
+    announcementText: {
+        x: 0,
+        y: 0
+    },
+    numberTextDefault: {
+        x: 0,
+        y: 0
+    },
+    numberTextExample: {
+        x: 0,
+        y: 0
+    },
+    startButton: {
+        x: -148,
+        y: 750
+    },
+    resetButton: {
+        x: 148,
+        y: 750
+    }
 };

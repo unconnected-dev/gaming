@@ -2,6 +2,7 @@ import { Application, DisplayObject } from "pixi.js";
 import { ResetRollupButton } from "./buttons/resetRollupButton";
 import { StartRollupButton } from "./buttons/startRollupButton";
 import { Announcement } from "./announcement";
+import { ObjectPositions } from "./miscStyle";
 
 export enum RollupState{
     WAITING,
@@ -23,6 +24,10 @@ export class RollupController {
 
     private _gameState:             RollupState;
     
+    private _announcementMessage!:  string;
+
+    private _announcementTarget!:   number;
+
     constructor(_app: Application){
         this._app = _app;
 
@@ -38,20 +43,24 @@ export class RollupController {
         this._app.stage.addChild(this._announcement.announcementContainer as unknown as DisplayObject);
 
         this._gameState = RollupState.WAITING;
+
+        this._announcementMessage = `Congratulations you won! \n`;
+        this._announcementTarget = 99999;
     }
 
     public resize(){
         const centerX = this._app.renderer.width/2;
         
-        this._startRollupButton.setPositions((centerX - this._startRollupButton.buttonContainer.width/2) - 148, 450);
-        this._resetRollupButton.setPositions((centerX - this._resetRollupButton.buttonContainer.width/2) + 148, 450);
+        this._startRollupButton.setPositions((centerX - this._startRollupButton.buttonContainer.width/2) + ObjectPositions.startButton.x, ObjectPositions.startButton.y);
+        this._resetRollupButton.setPositions((centerX - this._resetRollupButton.buttonContainer.width/2) + ObjectPositions.resetButton.x, ObjectPositions.resetButton.y);
 
-        this._announcement.setPositions(centerX, 200);
+        this._announcement.setPositions(centerX, 0);
     }
 
+    //Called by startRollupButton
     public startRollup(): void{
-        //Don't let the game start if already played
-        //As the player needs to reset the game first
+        //Don't let the rollup start if already played
+        //As the player needs to reset the rollup first
         if(this._gameState == RollupState.PLAYED)
             return;
 
@@ -64,6 +73,7 @@ export class RollupController {
         this.initiateAnnounceResult();
     }
 
+    //Called by resetRollupButton
     public reset(): void{
         this._resetRollupButton.onClickAnimation();
 
@@ -75,10 +85,7 @@ export class RollupController {
     }
 
     private initiateAnnounceResult(): void{
-        const message = `Congratulations you won! \n`;
-        const total = 99999;
-
-        this._announcement.announce(message, total);
+        this._announcement.announce(this._announcementMessage, this._announcementTarget);
     }
     
     public get rollupState(): RollupState{

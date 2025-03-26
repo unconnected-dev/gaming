@@ -1,5 +1,5 @@
 import { Container, DisplayObject, Graphics, Text } from "pixi.js";
-import { AnnouncementStyling, gameColors } from "./miscStyle";
+import { AnnouncementStyling, gameColors, ObjectPositions } from "./miscStyle";
 import { TweenMax } from "gsap";
 import { RollupController } from "./rollupController";
 
@@ -14,6 +14,10 @@ export class Announcement{
     private _x!:                        number;
 
     private _y!:                        number;
+
+    private _width:                     number;
+
+    private _height:                    number;
 
     private _lineWidth:                 number;
 
@@ -37,19 +41,23 @@ export class Announcement{
         
         this._rollupController   = _rollupController;
 
+        this._width             = AnnouncementStyling.width;
+        this._height            = AnnouncementStyling.height;
+
         this._lineWidth         = AnnouncementStyling.lineWidth;
         this._cornerRadius      = AnnouncementStyling.cornerRadius;
         this._borderColor       = AnnouncementStyling.borderColor;
         this._backgroundColor   = AnnouncementStyling.backgroundColor;
 
         this._graphic = new Graphics();
+        this.updateGraphic();
 
         this._announcementText = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
         
-        this._numberTextDefault = new Text(String(`0`), AnnouncementStyling.basicTextStyle.clone());
+        this._numberTextDefault = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
         this._numberTextDefault.scale.set(2, 2);
 
-        this._numberTextExample = new Text(String(`0`), AnnouncementStyling.basicTextStyle.clone());
+        this._numberTextExample = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
         this._numberTextExample.scale.set(2, 2);
         
         this._announcementContainer = new Container();
@@ -63,24 +71,23 @@ export class Announcement{
         this._x                  = _x;
         this._y                  = _y;
 
-        this._graphic.x          = this._x;
-        this._graphic.y          = this._y;
+        this._graphic.x          = this._x + ObjectPositions.announcementGraphic.x;
+        this._graphic.y          = this._y + ObjectPositions.announcementGraphic.y;
 
-        this._announcementText.x = this._x;
-        this._announcementText.y = this._y - 100;
+        this._announcementText.x = this._x + ObjectPositions.announcementText.x;
+        this._announcementText.y = this._y + ObjectPositions.announcementText.y;
 
-        this._numberTextDefault.x = this._x;
-        this._numberTextDefault.y = this._y;
+        this._numberTextDefault.x = this._x + ObjectPositions.numberTextDefault.x;
+        this._numberTextDefault.y = this._y + ObjectPositions.numberTextDefault.y;
 
-        this._numberTextExample.x = this._x;
-        this._numberTextExample.y = this._y + 150;
+        this._numberTextExample.x = this._x + ObjectPositions.numberTextExample.x;
+        this._numberTextExample.y = this._y + ObjectPositions.numberTextExample.y;
         
         this.updatePivots();
     }
 
     public announce(message: string, total: number): void{
         this._announcementText.text = message;
-        this.updateGraphic();
         this.updatePivots();
         this.rollupNumber(total, 10);
     }
@@ -89,7 +96,7 @@ export class Announcement{
         this._graphic.clear();
         this._graphic.lineStyle(this._lineWidth, this._borderColor, 1);
         this._graphic.beginFill(this._backgroundColor, 0.8);
-        this._graphic.drawRoundedRect(0, 0, 800, 450, this._cornerRadius);
+        this._graphic.drawRoundedRect(0, 0, this._width, this._height, this._cornerRadius);
         this._graphic.endFill();
     }
 
