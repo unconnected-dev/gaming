@@ -86,10 +86,10 @@ export class Announcement{
         this.updatePivots();
     }
 
-    public announce(message: string, total: number): void{
+    public announce(message: string, target: number, timeToComplete: number): void{
         this._announcementText.text = message;
         this.updatePivots();
-        this.rollupNumber(total, 10);
+        this.rollupNumber(target, timeToComplete);
     }
 
     private updateGraphic(): void{
@@ -191,11 +191,6 @@ export class Announcement{
         let maxSpacing = 50;
         let spacing = maxSpacing * Math.pow(progress, 0.25); 
         this._numberTextExample.style.letterSpacing = spacing;
-
-        // Make the number bigger at the end
-        // let scaleProgress = Math.pow(progress, 0.25);
-        // let scale = 2 - 0.6 * scaleProgress;
-        // this._numberTextExample.scale.set(scale);
     }
     
     
@@ -203,7 +198,6 @@ export class Announcement{
         this._announcementText.text = ``;
         this._numberTextDefault.text = ``;
         this._numberTextExample.text = ``;
-        this._graphic.clear();
         this.updatePivots();
     }
 
