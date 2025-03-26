@@ -14,19 +14,21 @@ export enum RollupState{
  */
 export class RollupController {
 
-    private _app:                   Application;
+    private _app:                           Application;
 
-    private _startRollupButton:     StartRollupButton;
+    private _startRollupButton:             StartRollupButton;
 
-    private _resetRollupButton:     ResetRollupButton;
+    private _resetRollupButton:             ResetRollupButton;
 
-    private _announcement:          Announcement;
+    private _announcement:                  Announcement;
 
-    private _gameState:             RollupState;
+    private _gameState:                     RollupState;
     
-    private _announcementMessage!:  string;
+    private _announcementMessage!:          string;
 
-    private _announcementTarget!:   number;
+    private _announcementTarget!:           number;
+
+    private _announcementTimeToComplete!:   number;
 
     constructor(_app: Application){
         this._app = _app;
@@ -46,6 +48,7 @@ export class RollupController {
 
         this._announcementMessage = `Congratulations you won! \n`;
         this._announcementTarget = 99999;
+        this._announcementTimeToComplete = 10;
     }
 
     public resize(){
@@ -85,7 +88,7 @@ export class RollupController {
     }
 
     private initiateAnnounceResult(): void{
-        this._announcement.announce(this._announcementMessage, this._announcementTarget);
+        this._announcement.announce(this._announcementMessage, this._announcementTarget, this._announcementTimeToComplete);
     }
     
     public get rollupState(): RollupState{
