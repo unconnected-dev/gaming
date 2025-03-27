@@ -46,7 +46,7 @@ export class RollupController {
 
         this._gameState = RollupState.WAITING;
 
-        this._announcementMessage = `Congratulations you won! \n`;
+        this._announcementMessage = `Congratulations! \n`;
         this._announcementTarget = 99999;
         this._announcementTimeToComplete = 10;
     }
