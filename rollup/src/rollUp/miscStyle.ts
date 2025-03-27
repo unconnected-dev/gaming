@@ -35,8 +35,8 @@ export const BasicButtonStyling = {
 };
 
 export const AnnouncementStyling = {
-    width:                  800,
-    height:                 600,
+    width:                  1000,
+    height:                 700,
     cornerRadius:           0,
     lineWidth:              0,
     borderColor:            gameColors.black,
@@ -53,19 +53,19 @@ export const AnnouncementStyling = {
 export const ObjectPositions = {
     announcementGraphic: {
         x: 0,
-        y: 400
+        y: 370
     },
     announcementText: {
         x: 0,
-        y: 0
+        y: 100
     },
     numberTextDefault: {
         x: 0,
-        y: 0
+        y: 170
     },
     numberTextExample: {
         x: 0,
-        y: 0
+        y: 270
     },
     startButton: {
         x: -148,
