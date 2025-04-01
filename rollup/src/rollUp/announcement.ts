@@ -1,6 +1,6 @@
 import { BlurFilter, Container, DisplayObject, Graphics, Text } from "pixi.js";
 import { AnnouncementStyling, gameColors, ObjectPositions } from "./miscStyle";
-import { TweenMax } from "gsap";
+import { TweenMax, gsap } from "gsap";
 import { RollupController } from "./rollupController";
 
 
@@ -33,7 +33,9 @@ export class Announcement{
 
     public _numberTextDefault!:         Text;
     
-    public _numberTextExample1!:         Text;
+    public _numberTextExample1!:        Text;
+
+    public _numberTextExample2!:        Text;
 
     private _blurFilter!:               BlurFilter;
     
@@ -60,6 +62,8 @@ export class Announcement{
 
         this._numberTextExample1 = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
         
+        this._numberTextExample2 = new Text(String(``), AnnouncementStyling.basicTextStyle.clone());
+        
         this._blurFilter = new BlurFilter(10);
         this._announcementText.filters = [this._blurFilter];
         
@@ -68,7 +72,8 @@ export class Announcement{
         this._announcementContainer.addChild(this._graphic as unknown as DisplayObject,
                                             this._announcementText as unknown as DisplayObject, 
                                             this._numberTextDefault as unknown as DisplayObject, 
-                                            this._numberTextExample1 as unknown as DisplayObject);
+                                            this._numberTextExample1 as unknown as DisplayObject,
+                                            this._numberTextExample2 as unknown as DisplayObject);
     }
 
     public setPositions(_x: number, _y: number): void{
@@ -84,8 +89,11 @@ export class Announcement{
         this._numberTextDefault.x = this._x + ObjectPositions.numberTextDefault.x;
         this._numberTextDefault.y = this._y + ObjectPositions.numberTextDefault.y;
 
-        this._numberTextExample1.x = this._x + ObjectPositions.numberTextExample.x;
-        this._numberTextExample1.y = this._y + ObjectPositions.numberTextExample.y;
+        this._numberTextExample1.x = this._x + ObjectPositions.numberTextExample1.x;
+        this._numberTextExample1.y = this._y + ObjectPositions.numberTextExample1.y;
+
+        this._numberTextExample2.x = this._x + ObjectPositions.numberTextExample2.x;
+        this._numberTextExample2.y = this._y + ObjectPositions.numberTextExample2.y;
         
         this.updatePivots();
     }
@@ -95,6 +103,9 @@ export class Announcement{
         this.updatePivots();
         this.rollupNumberDefault(target, timeToComplete);
         this.rollupNumberExample1(target, timeToComplete);
+        this.rollupNumberExample2(target, timeToComplete);
+
+        this.adjustBlurFilter(timeToComplete);
     }
 
     private updateGraphic(): void{
@@ -112,6 +123,7 @@ export class Announcement{
         this._announcementText.anchor.set(0.5, 0.5);
         this._numberTextDefault.anchor.set(0.5, 0.5);
         this._numberTextExample1.anchor.set(0.5, 0.5);
+        this._numberTextExample2.anchor.set(0.5, 0.5);
     }
 
     public rollupNumberDefault(target: number, duration: number){
@@ -134,13 +146,14 @@ export class Announcement{
     }
 
     public rollupNumberExample1(target: number, duration: number) {
-        // Start from current value
         const obj = { value: parseInt(this._numberTextExample1.text) || 0 }; 
         let baseScale = 1;
-        const milestones = [1000, 5000, 7500];
+
+        const milestones = [10000, 50000, 75000];
+        const milestoneCooldownDuration = 1500;
         let currentMilestoneIndex = 0;
         let milestoneCooldown = false;
-        
+
         TweenMax.to(obj, {
             duration: duration,
             value: target,
@@ -152,17 +165,18 @@ export class Announcement{
     
                 // Check if we've crossed the next milestone and cooldown is inactive
                 if (!milestoneCooldown && obj.value >= milestones[currentMilestoneIndex]) {
-                    this.scaleUp(baseScale); // Trigger the pop effect
-                    currentMilestoneIndex++; // Move to next milestone
-                    
-                    baseScale += 0.1; // Gradually increase baseline scale
+                    this.scaleUp(baseScale);
+                    currentMilestoneIndex++;
+
+                    // Increase baseline scale
+                    baseScale += 0.1; 
                     
                     milestoneCooldown = true;
                     
-                    // Set cooldown duration (slow down when reaching milestone)
+                    // Set cooldown duration
                     setTimeout(() => {
                         milestoneCooldown = false;
-                    }, 1500); // Adjust this value to control the slowdown duration
+                    }, milestoneCooldownDuration); 
     
                     // Move to the next milestone in the array
                     if (currentMilestoneIndex < milestones.length) {
@@ -177,59 +191,125 @@ export class Announcement{
                 this._numberTextExample1.text = target.toString();
                 this.adjustKerning(target, target);
             }
-        });
-    
-        this.adjustBlurFilter(duration);
+        });    
     }
     
-    
-    
-    // Scaling function with bounce effect
-    private scaleUp(baseScale: number) {
-        const popScale = baseScale + 0.4;  // Temporary scale up
+        // Scaling function with bounce effect
+        private scaleUp(baseScale: number) {
+            const popScale = baseScale + 0.4;  // Temporary scale up
 
-        TweenMax.to(this._numberTextExample1.scale, {
-            duration: 0.6,
-            x: popScale,
-            y: popScale,
-            ease: "power2.out",
-            onComplete: () => {
-                // Shrink down slightly below baseline, then bounce back
-                TweenMax.to(this._numberTextExample1.scale, {
-                    duration: 0.4,
-                    x: baseScale - 0.2, 
-                    y: baseScale - 0.2,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        TweenMax.to(this._numberTextExample1.scale, {
-                            duration: 0.2,
-                            x: baseScale,
-                            y: baseScale,
-                            ease: "bounce.out"
-                        });
+            TweenMax.to(this._numberTextExample1.scale, {
+                duration: 0.6,
+                x: popScale,
+                y: popScale,
+                ease: "power2.out",
+                onComplete: () => {
+                    // Shrink down slightly below baseline, then bounce back
+                    TweenMax.to(this._numberTextExample1.scale, {
+                        duration: 0.4,
+                        x: baseScale - 0.2, 
+                        y: baseScale - 0.2,
+                        ease: "power2.inOut",
+                        onComplete: () => {
+                            TweenMax.to(this._numberTextExample1.scale, {
+                                duration: 0.2,
+                                x: baseScale,
+                                y: baseScale,
+                                ease: "bounce.out"
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        private adjustKerning(currentValue: number, targetValue: number) {
+            // Progress from 1 to 0
+            const progress = Math.abs(currentValue - targetValue) / targetValue; 
+        
+            const maxSpacing = 30;
+            const minSpacing = 10;
+
+            // Interpolate spacing so it smoothly transitions but never drops below 10
+            // Ensures minimum spacing 
+            const announcementSpacing = minSpacing + (maxSpacing - minSpacing) * Math.pow(progress, 0.5);
+            const numberSpacing = maxSpacing * Math.pow(progress, 0.25); 
+
+            this._announcementText.style.letterSpacing = announcementSpacing;
+
+            this._numberTextExample1.style.letterSpacing = numberSpacing;
+
+            this._numberTextExample2.style.letterSpacing = numberSpacing;
+        }
+    
+        public rollupNumberExample2(target: number, duration: number) {
+            const startValue = parseInt(this._numberTextExample2.text) || 0;
+            const valueObject = { value: startValue };
+            const milestones = [10000, 50000, 75000];
+            const slowdownDistance = 250; // Distance over which to slow down and speed up
+            const slowdownDuration = 0.5; // Fixed slowdown duration for each milestone
+            const finalSlowdownDistance = target * 0.05; // Last 5% of the target distance to apply slowdown
+            const finalSlowdownTime = 0.5; // Fixed time for the last slowdown
+        
+            const totalSlowdownTime = milestones.length * 2 * slowdownDuration + finalSlowdownTime;
+            const effectiveDuration = duration - totalSlowdownTime; // Adjusted duration
+        
+            const timeline = gsap.timeline();
+        
+            let lastValue = startValue;
+        
+            // Helper function to animate value with easing
+            const animateValue = (value: number, duration: number, ease: string) => {
+                timeline.to(valueObject, {
+                    duration,
+                    value,
+                    ease,
+                    onUpdate: () => {
+                        this._numberTextExample2.text = Math.floor(valueObject.value).toString();
                     }
                 });
-            }
-        });
-    }
+            };
+        
+            // Loop through the milestones and create animations
+            milestones.forEach((milestone) => {
+                if (milestone > target) return;
+        
+                const preSlowdown = milestone - slowdownDistance;
+                const preSlowdownDuration = (preSlowdown - lastValue) / (target - startValue) * effectiveDuration;
+        
+                // Pre-slowdown
+                animateValue(preSlowdown, preSlowdownDuration, "power1.out");
+        
+                // Slowdown segment
+                animateValue(milestone, slowdownDuration, "sine.inOut");
+        
+                // Post-slowdown speedup
+                animateValue(milestone + slowdownDistance, slowdownDuration, "power1.out");
+        
+                lastValue = milestone + slowdownDistance;
+            });
+        
+            // Apply final slowdown for the last 5% of the target distance
+            const finalSlowdownStart = target - finalSlowdownDistance;
+            animateValue(finalSlowdownStart, finalSlowdownTime, "sine.inOut");
+        
+            // Final segment to reach the target with smooth speed-up
+            const finalDuration = effectiveDuration - (timeline.totalDuration() - totalSlowdownTime);
+            animateValue(target, finalDuration, "power2.out");
+        
+            // Ensure the final value is set exactly at the target
+            timeline.to(valueObject, {
+                onComplete: () => {
+                    this._numberTextExample2.text = target.toString();
+                }
+            });
+        }
+        
+        
+        
+        
 
-    private adjustKerning(currentValue: number, targetValue: number) {
-        // Progress from 1 to 0
-        const progress = Math.abs(currentValue - targetValue) / targetValue; 
-    
-        const maxSpacing = 30;
-        const minSpacing = 10;
-
-        // Interpolate spacing so it smoothly transitions but never drops below 10
-        // Ensures minimum spacing 
-        const announcementSpacing = minSpacing + (maxSpacing - minSpacing) * Math.pow(progress, 0.5);
-        const numberSpacing = maxSpacing * Math.pow(progress, 0.25); 
-
-        this._announcementText.style.letterSpacing = announcementSpacing;
-
-        this._numberTextExample1.style.letterSpacing = numberSpacing;
-    }
-    
+    // Adjust the blur filter down over time
     private adjustBlurFilter(duration: number){
         TweenMax.to(this._blurFilter, {
             blur: 0,
@@ -243,6 +323,7 @@ export class Announcement{
         this._announcementText.text = ``;
         this._numberTextDefault.text = ``;
         this._numberTextExample1.text = ``;
+        this._numberTextExample2.text = ``;
         this.updatePivots();
 
         this._blurFilter.blur = 10;
