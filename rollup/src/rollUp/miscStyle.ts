@@ -63,9 +63,13 @@ export const ObjectPositions = {
         x: 0,
         y: 170
     },
-    numberTextExample: {
+    numberTextExample1: {
         x: 0,
         y: 270
+    },
+    numberTextExample2: {
+        x: 0,
+        y: 370
     },
     startButton: {
         x: -148,
